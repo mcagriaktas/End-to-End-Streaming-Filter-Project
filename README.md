@@ -15,4 +15,6 @@
 | Kafka Broker 3        | Kafka broker                    | 3.8.0   | 0.0.0.0:39092->39092/tcp                                 |
 | Kafka Broker 2        | Kafka broker                    | 3.8.0   | 0.0.0.0:29092->29092/tcp                                 |
 | Kafka Broker 1        | Kafka broker                    | 3.8.0   | 0.0.0.0:19092->19092/tcp                                 |
-    
+| **WSL**          | Windows Subsystem for Linux environment         | Ubuntu 22.04 (Distro 2)             |            |
+| **Docker**       | Containerization platform                      | Docker version 27.2.0               |            |
+| **Docker Compose**| Tool for defining and running multi-container Docker applications | v2.29.2-desktop.2 |            |
