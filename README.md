@@ -13,7 +13,7 @@
 | Spark Worker 2         | Spark worker node             | 3.5.3    | 58086                                |
 | Spark Worker 1         | Spark worker node             | 3.5.3    | 58084                                |
 | Spark Master           | Spark master node             | 3.5.3    | 4040, 7077, 5050, 58080              |
-| Kafka Schema Registry  | Schema registry for Kafka     | Custom    | 18081                                |
+| Kafka Schema Registry  | Schema registry for Kafka     | 7.3.0    | 18081                                |
 | Kafka 3                | Kafka broker 3                | 3.8.0 KRaft    | 39092, 9192                                |
 | Kafka 1                | Kafka broker 1                | 3.8.0 KRaft    | 19092, 9192                                |
 | Kafka 2                | Kafka broker 2                | 3.8.0 KRaft    | 29092, 9192                                |
