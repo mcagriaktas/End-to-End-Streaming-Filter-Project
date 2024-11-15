@@ -1,5 +1,14 @@
 # Handling Streaming Data with Apache Spark Reading with Druid and Dashboarding with Superset
 
+Hello everyone. In this project, I'll demonstrate how to filter streaming data using Apache Kafka. We'll store our raw data in a topic called raw_data, which contains data for 10,000 users and 1,000,000 processes. The raw data will be consumed and processed using three Kafka brokers.
+During this process, we will retrieve the raw data with Scala Spark and filter it into three different topics:
+- If the balance is less than 500, we'll produce it to the low topic.
+- If the balance is between 500 and 2000, we'll produce it to the mid topic.
+- For balances above 2000, we'll produce to the high topic.
+
+Once the streaming starts, we will also read from the low, mid and high topics using Apache Druid. These three topics will be combined in Apache Druid. I will demonstrate how to create a new table in Druid, which can be queried using SQL. This is beneficial for data analytics teams, should they need it.
+Additionally, we will create a streaming dashboard in Superset. Apache Druid plays a crucial role in this process, as it enables us to efficiently analyze and visualize the data.
+
 | Software               | Description                    | Version   | UI-Ports                             |
 |------------------------|--------------------------------|-----------|---------------------------------------|
 | Superset               | Data visualization tool       |4.0.2     | 8088                                 |
@@ -18,3 +27,13 @@
 | Kafka 1                | Kafka broker 1                | 3.8.0 KRaft    | 19092, 9192                                |
 | Kafka 2                | Kafka broker 2                | 3.8.0 KRaft    | 29092, 9192                                |
 | Kafka UI               | Kafka user interface          | v0.7.2    | 18080                                |
+
+## Preparation steps
+### Firstly give full permission the path:
+```bash
+sudo chmod 777 -R End-to-End-Streaming-Filter-Project
+```
+
+### How to start the Containers and Project:
+Just follow the article:
+
