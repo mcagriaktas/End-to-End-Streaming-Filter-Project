@@ -28,8 +28,11 @@ Additionally, we will create a streaming dashboard in Superset. Apache Druid pla
 | Kafka 2                | Kafka broker 2                | 3.8.0 KRaft    | 29092, 9192                                |
 | Kafka UI               | Kafka user interface          | v0.7.2    | 18080                                |
 
+**Note**:
+This is not a production environment, but you can follow these steps to configure and install it in your environment.
+
 ## Preparation steps
-### Firstly give full permission the path:
+### Firstly, give full permission to the path:
 ```bash
 sudo chmod 777 -R End-to-End-Streaming-Filter-Project
 ```
