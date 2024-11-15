@@ -9,6 +9,11 @@ During this process, we will retrieve the raw data with Scala Spark and filter i
 Once the streaming starts, we will also read from the low, mid and high topics using Apache Druid. These three topics will be combined in Apache Druid. I will demonstrate how to create a new table in Druid, which can be queried using SQL. This is beneficial for data analytics teams, should they need it.
 Additionally, we will create a streaming dashboard in Superset. Apache Druid plays a crucial role in this process, as it enables us to efficiently analyze and visualize the data.
 
+## Artitecture
+
+![image](https://github.com/user-attachments/assets/770e018e-756b-489b-b76b-7948f1749791)
+
+## Software Versions
 | Software               | Description                    | Version   | UI-Ports                             |
 |------------------------|--------------------------------|-----------|---------------------------------------|
 | Superset               | Data visualization tool       |4.0.2     | 8088                                 |
