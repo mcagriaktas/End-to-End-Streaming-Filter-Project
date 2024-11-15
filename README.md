@@ -37,8 +37,11 @@ This is not a production environment, but you can follow these steps to configur
 sudo chmod 777 -R End-to-End-Streaming-Filter-Project
 ```
 
-### Spark-submut run folder:
-You can run your JAR file in the `containers/config/spark/submitfiles` directory.
+### Spark-submit run folder:
+You can run your `JAR file` in the `containers/config/spark/submitfiles` directory.
+
+### Datagenerator run folder:
+You can run your `.py files` in the `datagenerator/json` directory.
 
 ### How to start the Containers and Project:
 Just follow the article:
