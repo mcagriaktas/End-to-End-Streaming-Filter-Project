@@ -1,4 +1,4 @@
-# Handling Streaming Data with Apache Spark Reading with Druid and Dashboarding with Superset
+# Filtering Streaming Data with Apache Spark Reading with Druid and Dashboarding with Superset
 
 Hello everyone. In this project, I'll demonstrate how to filter streaming data using Apache Kafka. We'll store our raw data in a topic called raw_data, which contains data for 10,000 users and 1,000,000 processes. The raw data will be consumed and processed using three Kafka brokers.
 During this process, we will retrieve the raw data with Scala Spark and filter it into three different topics:
