@@ -36,6 +36,7 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Vscode
-**/.vscode
+# VS Code
 .vscode/
+**/.vscode/
+
