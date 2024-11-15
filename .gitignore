@@ -1,0 +1,38 @@
+# Metals and BSP files
+.metals/
+.bloop/
+.bsp/
+
+# IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+
+# Scala project files
+target/
+project/target/
+project/project/
+
+# SBT-specific files
+logs/
+output/
+lib_managed/
+src_managed/
+*.lock
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*~
+
+# Python caches
+**/__python_caches/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
