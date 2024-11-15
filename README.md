@@ -38,7 +38,7 @@ sudo chmod 777 -R End-to-End-Streaming-Filter-Project
 ```
 
 ### Spark-submut run folder:
-You can run your jar file in the: `containers/config/spark/submitfile`
+You can run your JAR file in the `containers/config/spark/submitfiles` directory.
 
 ### How to start the Containers and Project:
 Just follow the article:
