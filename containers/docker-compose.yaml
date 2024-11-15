@@ -1,0 +1,322 @@
+services:
+  spark-master:
+    container_name: spark-master
+    build:
+      context: ./container_images/spark/spark-master/.
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: "8g"
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+      - "58080:18080"
+      - "5050:8080"
+    volumes:
+      - ./config/spark/submitfiles:/opt/submitfiles
+    networks:
+      dahbest:
+        aliases:
+          - spark-master
+        ipv4_address: 172.80.0.110
+
+  spark-worker-1:
+    container_name: spark-worker-1
+    build:
+      context: ./container_images/spark/spark-worker/.
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: "8g"
+    depends_on:
+      - spark-master
+    ports:
+      - "58081-58085:8081"
+    volumes:
+      - ./config/spark/submitfiles:/opt/submitfiles
+    networks:
+      dahbest:
+        aliases:
+          - spark-worker-1
+        ipv4_address: 172.80.0.111
+
+  spark-worker-2:
+    container_name: spark-worker-2
+    build:
+      context: ./container_images/spark/spark-worker/.
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: "8g"
+    depends_on:
+      - spark-master
+    ports:
+      - "58086-58089:8081"
+    volumes:
+      - ./config/spark/submitfiles:/opt/submitfiles
+    networks:
+      dahbest:
+        aliases:
+          - spark-worker-2
+        ipv4_address: 172.80.0.112
+
+  kafka1:
+    container_name: kafka1
+    build:
+      context: container_images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./config/kafka1/server.properties:/kafka/config/server.properties
+      - ./data_logs/kafka_data/kafka1/:/data/kafka/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    build:
+      context: container_images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./config/kafka2/server.properties:/kafka/config/server.properties
+      - ./data_logs/kafka_data/kafka2/:/data/kafka/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    build:
+      context: container_images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./config/kafka3/server.properties:/kafka/config/server.properties
+      - ./data_logs/kafka_data/kafka3/:/data/kafka/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  kafka-schema-registry:
+    build:
+      context: container_images/kafka-registry
+      dockerfile: Dockerfile
+    container_name: kafka-schema-registry
+    ports:
+      - "18081:18081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka1:9192,PLAINTEXT://kafka2:9192,PLAINTEXT://kafka3:9192"
+      SCHEMA_REGISTRY_LISTENERS: "http://kafka-schema-registry:18081"
+      SCHEMA_REGISTRY_DATA_DIR: "/data/schema-registry"
+    volumes:
+      - ./data_logs/kafka_data/kafka-schema-registry:/data/schema-registry
+      - ./config/kafka-schema-registry/schema-registry.properties:/schema-registry/etc/schema-registry/schema-registry.properties
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+
+  kafka-ui:
+    build:
+      context: container_images/provectus/.
+      dockerfile: Dockerfile
+    container_name: kafka-ui
+    ports:
+      - "18080:18080"
+    volumes:
+      - ./config/provectus/config.yml:/mnt/config.yml:ro
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.16
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data_logs/postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=35413541
+      - POSTGRES_USER=cagri
+      - POSTGRES_DB=druid
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+    networks:
+      - dahbest
+
+  zookeeper:
+    container_name: zookeeper
+    image: zookeeper:3.5.10
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOO_MY_ID=1
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+    networks:
+      - dahbest
+
+  coordinator:
+    image: apache/druid:31.0.0
+    container_name: coordinator
+    volumes:
+      - ./data_logs/druid_data_logs/druid_shared:/opt/shared
+      - ./data_logs/druid_data_logs/coordinator_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+    ports:
+      - "8081:8081"
+    command:
+      - coordinator
+    env_file:
+      - ./config/druid/environment
+    networks:
+      - dahbest
+
+  broker:
+    image: apache/druid:31.0.0
+    container_name: broker
+    volumes:
+      - ./data_logs/druid_data_logs/broker_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+    ports:
+      - "8082:8082"
+    command:
+      - broker
+    env_file:
+      - ./config/druid/environment
+    networks:
+      - dahbest
+
+  historical:
+    image: apache/druid:31.0.0
+    container_name: historical
+    volumes:
+      - ./data_logs/druid_data_logs/druid_shared:/opt/shared
+      - ./data_logs/druid_data_logs/historical_var:/opt/druid/var
+    depends_on: 
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8083:8083"
+    command:
+      - historical
+    env_file:
+      - ./config/druid/environment
+    networks:
+      - dahbest
+
+  middlemanager:
+    image: apache/druid:31.0.0
+    container_name: middlemanager
+    volumes:
+      - ./data_logs/druid_data_logs/druid_shared:/opt/shared
+      - ./data_logs/druid_data_logs/middle_var:/opt/druid/var
+    depends_on: 
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8091:8091"
+      - "8100-8105:8100-8105"
+    command:
+      - middleManager
+    env_file:
+      - ./config/druid/environment
+    networks:
+      - dahbest
+
+  router:
+    image: apache/druid:31.0.0
+    container_name: router
+    volumes:
+      - ./data_logs/druid_data_logs/router_var:/opt/druid/var
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8888:8888"
+    command:
+      - router
+    env_file:
+      - ./config/druid/environment
+    networks:
+      - dahbest
+
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: '35413541'
+      PYTHONPATH: '/app/pythonpath:/app/docker/pythonpath_dev'
+      DATABASE_URL: 'postgresql://cagri:35413541@postgres:5432/druid'
+    volumes:
+      - ./data_logs/superset_data:/app/superset_home
+      - ./config/superset/superset_config.py:/app/pythonpath/superset_config.py
+    depends_on:
+      - postgres
+      - coordinator
+      - broker
+      - historical
+      - middlemanager
+      - router
+    networks:
+      - dahbest
+
+networks:
+  dahbest:
+    external: true
