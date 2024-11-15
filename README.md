@@ -49,5 +49,5 @@ You can run your `JAR file` in the `containers/config/spark/submitfiles` directo
 You can run your `.py files` in the `datagenerator/json` directory.
 
 ### How to start the Containers and Project:
-Just follow the article:
+Just follow the article: https://medium.com/towardsdev/filtering-streaming-data-with-apache-spark-reading-with-druid-and-dashboarding-with-superset-3cc3fa936c79
 
